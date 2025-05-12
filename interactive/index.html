@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Glucose + Food Log Timeline</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        svg {
+            font-family: sans-serif;
+            margin: 2rem auto;
+            display: block;
+        }
+        .meal {
+            fill: orange;
+            cursor: pointer;
+        }
+        .glucose {
+            fill: steelblue;
+            stroke: black;
+            stroke-width: 0.5px;
+            r: 4;
+        }
+    </style>
+</head>
+<body>
+    <h2 id="chart-title" style="text-align:center; margin-bottom: 0.5em;">
+        Average Glucose Response for All Meals
+    </h2>
+    <svg id="timeline" width="960" height="500"></svg>
+    <div id="tag-buttons">
+        <button data-tag="vegetarian">Vegetarian</button>
+        <button data-tag="snack">Snack</button>
+        <button data-tag="breakfast">Breakfast</button>
+        <button data-tag="drink">Drink</button>
+        <button data-tag="dessert">Dessert</button>
+        <button data-tag="all" class="active">All Meals</button>
+    </div>
+    <script src="timeline.js"></script>
+    <div class="tooltip" id="tooltip"></div>
+
+    <h2 id="chart-title-agg" style="text-align:center; margin-top:2em; margin-bottom: 0.5em;">
+        Average Glucose Response for All Meals (All Participants)
+    </h2>
+    <svg id="timeline-agg" width="960" height="500"></svg>
+    <div id="tag-buttons-agg">
+        <button data-tag="vegetarian">Vegetarian</button>
+        <button data-tag="snack">Snack</button>
+        <button data-tag="breakfast">Breakfast</button>
+        <button data-tag="drink">Drink</button>
+        <button data-tag="dessert">Dessert</button>
+        <button data-tag="all" class="active">All Meals</button>
+    </div>
+    <script src="timeline_aggregated.js"></script>
+    <div class="tooltip" id="tooltip-agg"></div>
+</body>
+</html>
