@@ -1,0 +1,102 @@
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 1rem;
+  background-color: #fff;
+}
+
+svg {
+  display: block;
+  margin: auto;
+}
+
+.patient-line {
+  opacity: 0.6;
+  transition: opacity 0.2s ease, stroke-width 0.2s ease;
+}
+
+.patient-line:hover {
+  opacity: 1;
+  stroke-width: 3;
+}
+
+.tooltip {
+  position: absolute;
+  background: white;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  padding: 0.5em;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  font-size: 0.85em;
+  color: #333;
+  display: none;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+#tag-buttons {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+#tag-buttons button {
+  margin: 0 5px;
+  padding: 6px 12px;
+  background: #f0f0f0;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+#tag-buttons button:hover {
+  background: #ddd;
+}
+
+#tag-buttons button.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+/** **/
+
+#tag-buttons-agg {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+#tag-buttons-agg button {
+  margin: 0 5px;
+  padding: 6px 12px;
+  background: #f0f0f0;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+#tag-buttons-agg button.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+#tag-buttons-agg button:hover {
+  background: #ddd;
+}
+
+.tooltip {
+  position: absolute;
+  display: none;
+  background-color: white;
+  border: 1px solid #aaa;
+  padding: 0.5em;
+  font-size: 13px;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+
+
