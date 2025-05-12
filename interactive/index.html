@@ -5,6 +5,7 @@
     <title>Glucose + Food Log Timeline</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="timeline_combined.js" type="module"></script>
     <style>
         svg {
             font-family: sans-serif;
@@ -24,26 +25,16 @@
     </style>
 </head>
 <body>
+    <!-- Title for the combined plot -->
     <h2 id="chart-title" style="text-align:center; margin-bottom: 0.5em;">
         Average Glucose Response for All Meals
     </h2>
-    <svg id="timeline" width="960" height="500"></svg>
-    <div id="tag-buttons">
-        <button data-tag="vegetarian">Vegetarian</button>
-        <button data-tag="snack">Snack</button>
-        <button data-tag="breakfast">Breakfast</button>
-        <button data-tag="drink">Drink</button>
-        <button data-tag="dessert">Dessert</button>
-        <button data-tag="all" class="active">All Meals</button>
-    </div>
-    <script src="timeline.js"></script>
-    <div class="tooltip" id="tooltip"></div>
 
-    <h2 id="chart-title-agg" style="text-align:center; margin-top:2em; margin-bottom: 0.5em;">
-        Average Glucose Response for All Meals (All Participants)
-    </h2>
-    <svg id="timeline-agg" width="960" height="500"></svg>
-    <div id="tag-buttons-agg">
+    <!-- SVG for the combined plot -->
+    <svg id="timeline" width="960" height="500"></svg>
+
+    <!-- Buttons for filtering meal tags -->
+    <div id="tag-buttons" style="text-align:center; margin-top: 1em;">
         <button data-tag="vegetarian">Vegetarian</button>
         <button data-tag="snack">Snack</button>
         <button data-tag="breakfast">Breakfast</button>
@@ -51,7 +42,14 @@
         <button data-tag="dessert">Dessert</button>
         <button data-tag="all" class="active">All Meals</button>
     </div>
-    <script src="timeline_aggregated.js"></script>
-    <div class="tooltip" id="tooltip-agg"></div>
+
+    <!-- Tooltip for the plot -->
+    <div class="tooltip" id="tooltip" style="position: absolute; display: none; background: #fff; border: 1px solid #ccc; padding: 10px; border-radius: 5px; pointer-events: none;"></div>
+
+    <!-- Container for displaying selected patient IDs -->
+    <div id="selected-patients" style="text-align:center; margin-top: 1em; font-size: 14px;">
+        No patients selected.
+    </div>
+
 </body>
 </html>

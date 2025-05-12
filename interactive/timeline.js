@@ -1,7 +1,9 @@
 console.log("📈 timeline.js loaded");
 
+// Global variables to store data
 let glucoseDataGlobal, foodDataGlobal;
 
+// Get the data from JSON files and initialize the plot
 Promise.all([
     d3.json("data/flattened_glucose.json"),
     d3.json("data/food_log_tagged.json")
@@ -13,24 +15,32 @@ Promise.all([
     updatePlot("all");
 });
 
+// Updates plot based on the selected tag
 function updatePlot(tagFilter) {
+    // Clear previous lines and axes
     const svg = d3.select("#timeline");
     svg.selectAll(".patient-line").remove();
     svg.selectAll("g").remove();
     svg.selectAll("text.axis-label").remove();
 
+    // Get the patient IDs that we care about
     const participantIDs = [...new Set(glucoseDataGlobal.map(d => d.patient_id))];
 
+
     const filteredLines = participantIDs.map(pid => {
+        // Extract glucose data and food data for the current participant
         const { aligned, mealCount } = extractGlucoseWindows(glucoseDataGlobal, foodDataGlobal, pid, tagFilter);
+        // Average glucose data by minute for alignment purposes
         const averaged = averageByMinute(aligned);
         return {
             uid: pid,
             values: averaged,
             mealCount: mealCount
         };
+        // Filter out participants with no meals
     }).filter(p => p.values.length > 0);
 
+    // Render the lines using the filtered data
     drawLines(filteredLines);
 }
 
