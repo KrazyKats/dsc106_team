@@ -195,18 +195,29 @@ function drawCombinedLines(patients, aggregatedLine, numMeals, numParticipants, 
         .attr("class", "patient-line")
         .attr("fill", "none")
         .attr("stroke", (_, i) => d3.schemeTableau10[i % 10])
-        .attr("stroke-width", 2)
+        .attr("stroke-width", 5) // Keep the thickness consistent
         .attr("d", d => lineGen(d.values))
         .attr("opacity", 0.6)
+        .style("cursor", "pointer") // Add pointer cursor for better UX
+        .each(function (d) {
+            // Reapply the "selected" class if the patient ID is in clickedPatientIDs
+            if (clickedPatientIDs.includes(d.uid)) {
+                d3.select(this).classed("selected", true);
+            }
+        })
         .on("click", function (event, d) {
+            const line = d3.select(this);
+
             // Toggle the patient ID in the clickedPatientIDs array
             const index = clickedPatientIDs.indexOf(d.uid);
             if (index === -1) {
                 clickedPatientIDs.push(d.uid);
                 console.log(`Patient ID ${d.uid} added to clickedPatientIDs.`);
+                line.classed("selected", true); // Add highlight class
             } else {
                 clickedPatientIDs.splice(index, 1);
                 console.log(`Patient ID ${d.uid} removed from clickedPatientIDs.`);
+                line.classed("selected", false); // Remove highlight class
             }
 
             // Update the display of selected patient IDs
@@ -223,7 +234,8 @@ function drawCombinedLines(patients, aggregatedLine, numMeals, numParticipants, 
         .attr("class", "agg-line")
         .attr("fill", "none")
         .attr("stroke", "#d62728") // Red color for the aggregated line
-        .attr("stroke-width", 3)
+        .attr("stroke-width", 5) // Slightly thicker for emphasis
+        .attr("stroke-dasharray", "5,5") // Make the line dotted
         .attr("d", lineGen);
 
     // Tooltip behavior for aggregated line
