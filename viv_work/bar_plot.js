@@ -32,9 +32,11 @@ async function processJsonFile(idsArray, tag) {
 // Call the function
 const currentMeal = await processJsonFile(["001"]);
 const allMeals = await processJsonFile();
-createBarPlot(currentMeal, allMeals);
+const usedRanges = [10, 25, 50]
+const axisLabels = ["0-10g", "10-25g", "25-50g", "50+g"]
+createBarPlot(currentMeal, allMeals, usedRanges, axisLabels);
 
-function createBarPlot(currentMeal, allMeals) {
+function createBarPlot(currentMeal, allMeals, usedRanges, axisLabels) {
   const margin = { top: 40, right: 30, bottom: 60, left: 40 };
   const width = 600 - margin.left - margin.right;
   const height = 400 - margin.top - margin.bottom;
@@ -56,43 +58,46 @@ function createBarPlot(currentMeal, allMeals) {
   const y = d3.scaleLinear().rangeRound([height, 0]);
 
   const color = d3.scaleOrdinal().range(["#1f77b4", "#ff7f0e"]);
-  function updateChart(currentMeal, allMeals) {
+  function updateChart(currentMeal, allMeals, usedRanges, axisLabels) {
     // Process the data
-    const percentages1 = categorizeMealsByCarbs(currentMeal);
-    const percentages2 = categorizeMealsByCarbs(allMeals);
-  
+    const percentages1 = categorizeMealsByCarbs(currentMeal, usedRanges);
+    const percentages2 = categorizeMealsByCarbs(allMeals, usedRanges);
+
     const chartData = [
       {
-        range: "0-10g",
-        "Meal Set 1": percentages1["0-10g"],
-        "Meal Set 2": percentages2["0-10g"],
+        range: axisLabels[0],
+        "Meal Set 1": percentages1[usedRanges[0]],
+        "Meal Set 2": percentages2[usedRanges[0]],
       },
       {
-        range: "10-20g",
-        "Meal Set 1": percentages1["10-20g"],
-        "Meal Set 2": percentages2["10-20g"],
+        range: axisLabels[1],
+        "Meal Set 1": percentages1[usedRanges[1]],
+        "Meal Set 2": percentages2[usedRanges[1]],
       },
       {
-        range: "20-30g",
-        "Meal Set 1": percentages1["20-30g"],
-        "Meal Set 2": percentages2["20-30g"],
+        range: axisLabels[2],
+        "Meal Set 1": percentages1[usedRanges[2]],
+        "Meal Set 2": percentages2[usedRanges[2]],
       },
       {
-        range: "30+g",
-        "Meal Set 1": percentages1["30+g"],
-        "Meal Set 2": percentages2["30+g"],
+        range: axisLabels[3],
+        "Meal Set 1": percentages1.greater,
+        "Meal Set 2": percentages2.greater,
       },
     ];
-  
+
     // Clear previous chart elements
     svg.selectAll("*").remove();
-  
+
     // Setup domains
     const keys = ["Meal Set 1", "Meal Set 2"];
     x0.domain(chartData.map((d) => d.range));
     x1.domain(keys).rangeRound([0, x0.bandwidth()]);
-    y.domain([0, d3.max(chartData, (d) => d3.max(keys, (key) => d[key]))]).nice();
-  
+    y.domain([
+      0,
+      d3.max(chartData, (d) => d3.max(keys, (key) => d[key])),
+    ]).nice();
+
     // Add x axis
     svg
       .append("g")
@@ -105,7 +110,7 @@ function createBarPlot(currentMeal, allMeals) {
       .attr("fill", "#000")
       .attr("text-anchor", "middle")
       .text("Carbohydrate Range");
-  
+
     // Add y axis
     svg
       .append("g")
@@ -118,7 +123,7 @@ function createBarPlot(currentMeal, allMeals) {
       .attr("transform", "rotate(-90)")
       .attr("text-anchor", "middle")
       .text("Percentage of Meals (%)");
-  
+
     // Add the bars
     svg
       .append("g")
@@ -138,7 +143,7 @@ function createBarPlot(currentMeal, allMeals) {
       .attr("fill", (d) => color(d.key))
       .append("title")
       .text((d) => `${d.range}, ${d.key}: ${d.value.toFixed(1)}%`);
-  
+
     // Add value labels on top of the bars
     svg
       .append("g")
@@ -156,7 +161,7 @@ function createBarPlot(currentMeal, allMeals) {
       .attr("text-anchor", "middle")
       .attr("font-size", "10px")
       .text((d) => `${d.value.toFixed(1)}%`);
-  
+
     // Add legend
     const legend = svg
       .append("g")
@@ -169,14 +174,14 @@ function createBarPlot(currentMeal, allMeals) {
       .enter()
       .append("g")
       .attr("transform", (d, i) => `translate(0,${i * 20})`);
-  
+
     legend
       .append("rect")
       .attr("x", width - 19)
       .attr("width", 19)
       .attr("height", 19)
       .attr("fill", color);
-  
+
     legend
       .append("text")
       .attr("x", width - 24)
@@ -184,33 +189,25 @@ function createBarPlot(currentMeal, allMeals) {
       .attr("dy", "0.32em")
       .text((d) => d);
   }
-  updateChart(currentMeal, allMeals);
+  updateChart(currentMeal, allMeals, usedRanges, axisLabels);
 }
 
-
-// document
-//   .getElementById("update-chart")
-//   .addEventListener("click", updateChart);
-
-
-
-function categorizeMealsByCarbs(meals) {
-  const ranges = {
-    "0-10g": 0,
-    "10-20g": 0,
-    "20-30g": 0,
-    "30+g": 0,
-  };
+function categorizeMealsByCarbs(meals, usedRanges) {
+  // Bins the meals by carbohydrate content
+  const ranges = Object.fromEntries(usedRanges.map((key) => [key, 0]));
+  ranges.greater = 0;
 
   meals.forEach((meal) => {
-    if (meal.carbs < 10) {
-      ranges["0-10g"]++;
-    } else if (meal.carbs < 20) {
-      ranges["10-20g"]++;
-    } else if (meal.carbs < 30) {
-      ranges["20-30g"]++;
-    } else {
-      ranges["30+g"]++;
+    let noMatches = true;
+    for (const range of usedRanges) {
+      if (meal.carbs <= range) {
+        ranges[range]++;
+        noMatches = false;
+        break;
+      }
+    }
+    if (noMatches) {
+      ranges.greater++;
     }
   });
   const total = meals.length;
@@ -223,8 +220,9 @@ function categorizeMealsByCarbs(meals) {
   return percentages;
 }
 
-// Todo: 
-// Change carb indices included in the data
-// Move index a bit to the right
-// Move CSS to different file
-// Allow buttons to be selectable for different items
+// Todo:
+// Make just one plot displayable
+// Move legend to right
+// Change labels on legend
+// Change line colors (possibly)
+// Integrate into other code
