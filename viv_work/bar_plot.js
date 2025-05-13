@@ -29,29 +29,13 @@ async function processJsonFile(idsArray, tag) {
     return outputArray;
   }
 }
-
-// Call the function
-const currentMeal = await processJsonFile(["001"]);
-const allMeals = await processJsonFile();
-const usedRanges = [10, 25, 50]
-const axisLabels = ["0-10g", "10-25g", "25-50g", "50+g"]
-
-// Call the function with custom labels
-// Example: Display both datasets with custom labels
-// createBarPlot(currentMeal, allMeals, usedRanges, axisLabels, {
-//   set1Label: "Patient 001",
-//   set2Label: "All Patients", 
-//   title: "Carbohydrate Comparison"
-// });
-
-// Example: Display just one dataset
-// Uncomment to test
-createSingleBarPlot(currentMeal, usedRanges, axisLabels, {
-  set1Label: "Patient 001 Meals",
-  title: "Patient 001 Carb Distribution"
-});
-
-function createBarPlot(mealSet1, mealSet2, usedRanges, axisLabels, options = {}) {
+function createBarPlot(
+  mealSet1,
+  mealSet2,
+  usedRanges,
+  axisLabels,
+  options = {}
+) {
   // Check if we have data to plot
   if (!mealSet1 || mealSet1.length === 0) {
     console.error("No data available for the first meal set");
@@ -63,18 +47,18 @@ function createBarPlot(mealSet1, mealSet2, usedRanges, axisLabels, options = {})
     set1Label: "Meal Set 1",
     set2Label: "Meal Set 2",
     title: null,
-    colors: null
+    colors: null,
   };
-  
+
   // Merge provided options with defaults
   const mergedOptions = { ...defaultOptions, ...options };
 
   // Clear previous chart if any exists
   d3.select("#chart svg").remove();
 
-  const margin = { top: 40, right: 150, bottom: 60, left: 40 }; // Significantly increased right margin for legend
-  const width = 600 - margin.left - margin.right;
-  const height = 400 - margin.top - margin.bottom;
+  const margin = { top: 40, right: 150, bottom: 60, left: 40 };
+  const width = 800 - margin.left - margin.right;
+  const height = 600 - margin.top - margin.bottom;
 
   // Create SVG container
   const svg = d3
@@ -86,10 +70,17 @@ function createBarPlot(mealSet1, mealSet2, usedRanges, axisLabels, options = {})
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
   // Add title to the chart
-  const chartTitle = mergedOptions.title || 
-                    (isSingleDataset ? mergedOptions.set1Label : "Comparison: " + mergedOptions.set1Label + " vs " + mergedOptions.set2Label);
-                    
-  svg.append("text")
+  const chartTitle =
+    mergedOptions.title ||
+    (isSingleDataset
+      ? mergedOptions.set1Label
+      : "Comparison: " +
+        mergedOptions.set1Label +
+        " vs " +
+        mergedOptions.set2Label);
+
+  svg
+    .append("text")
     .attr("x", width / 2)
     .attr("y", -margin.top / 2)
     .attr("text-anchor", "middle")
@@ -109,41 +100,41 @@ function createBarPlot(mealSet1, mealSet2, usedRanges, axisLabels, options = {})
   const defaultColors = isSingleDataset
     ? ["#4285F4"] // Single color for one dataset - nice blue
     : ["#4285F4", "#EA4335"]; // Google-like blue and red for better contrast
-    
+
   const colors = mergedOptions.colors || defaultColors;
   const color = d3.scaleOrdinal().range(colors);
 
   // Process the data for the first meal set
   const percentages1 = categorizeMealsByCarbs(mealSet1, usedRanges);
-  
+
   // Prepare chart data based on whether we have one or two datasets
   let chartData = [];
   let keys = [];
-  
+
   if (isSingleDataset) {
     // For single dataset
     const label = mergedOptions.set1Label;
     keys = [label];
-    
+
     chartData = axisLabels.map((label, index) => {
       const obj = { range: label };
-      
+
       if (index < usedRanges.length) {
         obj[keys[0]] = percentages1[usedRanges[index]];
       } else {
         obj[keys[0]] = percentages1.greater;
       }
-      
+
       return obj;
     });
   } else {
     // For two datasets
     const percentages2 = categorizeMealsByCarbs(mealSet2, usedRanges);
     keys = [mergedOptions.set1Label, mergedOptions.set2Label];
-    
+
     chartData = axisLabels.map((label, index) => {
       const obj = { range: label };
-      
+
       if (index < usedRanges.length) {
         obj[mergedOptions.set1Label] = percentages1[usedRanges[index]];
         obj[mergedOptions.set2Label] = percentages2[usedRanges[index]];
@@ -151,7 +142,7 @@ function createBarPlot(mealSet1, mealSet2, usedRanges, axisLabels, options = {})
         obj[mergedOptions.set1Label] = percentages1.greater;
         obj[mergedOptions.set2Label] = percentages2.greater;
       }
-      
+
       return obj;
     });
   }
@@ -236,7 +227,7 @@ function createBarPlot(mealSet1, mealSet2, usedRanges, axisLabels, options = {})
     .data(keys)
     .enter()
     .append("g")
-    .attr("transform", (d, i) => `translate(${width + 20},${20 + i * 25})`);  // More spacing between legend items
+    .attr("transform", (d, i) => `translate(${width + 20},${20 + i * 25})`); // More spacing between legend items
 
   legend
     .append("rect")
@@ -251,10 +242,10 @@ function createBarPlot(mealSet1, mealSet2, usedRanges, axisLabels, options = {})
     .attr("y", 9)
     .attr("dy", "0.32em")
     .text((d) => d)
-    .each(function(d) {
+    .each(function (d) {
       // Get the computed text width and ensure it fits
       const textWidth = this.getComputedTextLength();
-      if (textWidth > (margin.right - 50)) {
+      if (textWidth > margin.right - 50) {
         d3.select(this).attr("textLength", margin.right - 50);
       }
     });
@@ -288,30 +279,42 @@ function categorizeMealsByCarbs(meals, usedRanges) {
   return percentages;
 }
 
-// Function to create only one plot
-function createSingleBarPlot(mealSet, usedRanges, axisLabels, options = {}) {
-  // Set default label if not provided
-  if (!options.set1Label) {
-    options.set1Label = "Meal Distribution";
+async function loadDataAndPlot(twoPlots, idsArray, tag) {
+  /*
+  Parameters:
+  Two Plots 
+  if false, only average meal data. 
+  if true, average meal data and selected meal data from idsArray and tag
+
+  idsArray:
+  All IDs of patients to include in the plot. If undefined, all patients are included.
+  tag: The tag to filter meals by. If undefined, all meals are included.
+  */
+  let currentMeal;
+  let allMeals;
+  if (twoPlots) {
+    currentMeal = await processJsonFile(idsArray, tag);
+    allMeals = await processJsonFile();
+  } else {
+    currentMeal = await processJsonFile();
+    allMeals = null;
   }
-  
-  createBarPlot(mealSet, null, usedRanges, axisLabels, options);
+  const usedRanges = [10, 25, 50];
+  const axisLabels = ["0-10g", "10-25g", "25-50g", "50+g"];
+  if (twoPlots) {
+    createBarPlot(currentMeal, allMeals, usedRanges, axisLabels, {
+      set1Label: "Selected Data",
+      set2Label: "All Data",
+      title:
+        "Are Carbs in Selected Meals Different From Average Meal in Dataset?",
+      colors: ["#4285F4", "#EA4335"],
+    });
+  }
+  else {
+    createBarPlot(currentMeal, null, usedRanges, axisLabels, {
+      set1Label: "All Meals",
+      title: "Carbohydrates Distribution for All Patients",
+    });
+  }
 }
-
-// Example usage:
-// Basic usage with default labels
-// createBarPlot(currentMeal, allMeals, usedRanges, axisLabels);
-
-// Example with custom labels for both datasets
-// createBarPlot(currentMeal, allMeals, usedRanges, axisLabels, {
-//   set1Label: "Patient 001",
-//   set2Label: "All Patients",
-//   title: "Carbohydrate Comparison: Individual vs Population",
-//   colors: ["#3366CC", "#DC3912"]  // Optional custom colors
-// });
-
-// Example of single dataset with custom label
-// createSingleBarPlot(currentMeal, usedRanges, axisLabels, {
-//   set1Label: "Patient 001 Meals",
-//   title: "Carbohydrate Distribution for Patient 001"
-// });
+loadDataAndPlot(false, undefined, "breakfast");
