@@ -5,8 +5,8 @@ let glucoseDataGlobal, foodDataGlobal;
 
 // Load data and initialize the plot
 Promise.all([
-    d3.json("data/flattened_glucose.json"),
-    d3.json("data/food_log_tagged.json")
+    d3.json("data_website/flattened_glucose.json"),
+    d3.json("data_website/food_log_tagged.json")
 ]).then(([glucoseData, foodData]) => {
     console.log("📦 Data loaded");
     glucoseDataGlobal = glucoseData;
