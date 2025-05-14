@@ -293,7 +293,6 @@ function drawCombinedLines(patients, aggregatedLine, numMeals, numParticipants, 
 
     // Tooltip behavior for aggregated line
     const peak = d3.max(aggregatedLine, d => d.avg);
-
     svg.selectAll(".agg-line")
         .on("mouseover", function () {
             tooltip.style("display", "block")
@@ -304,11 +303,13 @@ function drawCombinedLines(patients, aggregatedLine, numMeals, numParticipants, 
                 `);
         })
         .on("mousemove", function (event) {
-            tooltip.style("left", (event.pageX + 15) + "px")
+            tooltip
+                .style("left", (event.pageX + 15) + "px")
                 .style("top", (event.pageY - 20) + "px");
         })
         .on("mouseout", function () {
-            tooltip.style("display", "none");
+            tooltip
+                .style("display", "none");
         });
 
     // Title logic
