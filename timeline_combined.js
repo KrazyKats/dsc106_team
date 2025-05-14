@@ -170,6 +170,7 @@ function updateBarPlot() {
 }
 
 // Function to draw both individual and aggregated lines
+// Function to draw both individual and aggregated lines
 function drawCombinedLines(patients, aggregatedLine, numMeals, numParticipants, tagFilter) {
     const svg = d3.select("#timeline");
     const width = +svg.attr("width") - 100;
@@ -210,6 +211,18 @@ function drawCombinedLines(patients, aggregatedLine, numMeals, numParticipants, 
         .x(d => xScale(d.minute))
         .y(d => yScale(d.avg));
 
+    // Create a tooltip for displaying patient IDs
+    const tooltip = d3.select("body")
+        .append("div")
+        .attr("class", "tooltip")
+        .style("position", "absolute")
+        .style("background", "#fff")
+        .style("border", "1px solid #ccc")
+        .style("padding", "5px")
+        .style("border-radius", "5px")
+        .style("display", "none")
+        .style("pointer-events", "none");
+
     // Draw individual patient lines
     svg.selectAll(".patient-line")
         .data(patients)
@@ -227,6 +240,20 @@ function drawCombinedLines(patients, aggregatedLine, numMeals, numParticipants, 
             if (clickedPatientIDs.includes(d.uid)) {
                 d3.select(this).classed("selected", true);
             }
+        })
+        .on("mouseover", function (event, d) {
+            // Show the tooltip with the patient ID
+            tooltip.style("display", "block")
+                .html(`<strong>Patient ID:</strong> ${d.uid}`);
+        })
+        .on("mousemove", function (event) {
+            // Move the tooltip with the mouse
+            tooltip.style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 20) + "px");
+        })
+        .on("mouseout", function () {
+            // Hide the tooltip when the mouse leaves the line
+            tooltip.style("display", "none");
         })
         .on("click", function (event, d) {
             const line = d3.select(this);
@@ -266,7 +293,6 @@ function drawCombinedLines(patients, aggregatedLine, numMeals, numParticipants, 
 
     // Tooltip behavior for aggregated line
     const peak = d3.max(aggregatedLine, d => d.avg);
-    const tooltip = d3.select("#tooltip");
 
     svg.selectAll(".agg-line")
         .on("mouseover", function () {
@@ -278,8 +304,7 @@ function drawCombinedLines(patients, aggregatedLine, numMeals, numParticipants, 
                 `);
         })
         .on("mousemove", function (event) {
-            tooltip
-                .style("left", (event.pageX + 15) + "px")
+            tooltip.style("left", (event.pageX + 15) + "px")
                 .style("top", (event.pageY - 20) + "px");
         })
         .on("mouseout", function () {
