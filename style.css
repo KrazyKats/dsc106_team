@@ -1,18 +1,32 @@
+/* General Page Styling */
 body {
   font-family: sans-serif;
   margin: 0;
-  padding: 1rem;
-  background-color: #fff;
+  padding: 0;
+  background-color: #fafafa;
+  color: #333;
 }
 
+/* Chart Title */
+#chart-title {
+  text-align: center;
+  margin-bottom: 0.5em;
+  font-size: 1.8em;
+}
+
+/* SVG Styling */
 svg {
+  font-family: sans-serif;
+  margin: 2rem auto;
   display: block;
-  margin: auto;
+  max-width: 100%;
+  height: auto;
 }
 
-.patient-line {
-  opacity: 0.6;
-  transition: opacity 0.2s ease, stroke-width 0.2s ease;
+/* Data Point Styling */
+.meal {
+  fill: orange;
+  cursor: pointer;
 }
 
 .patient-line.selected {
@@ -28,133 +42,142 @@ svg {
   opacity: 1;
 }
 
-.tooltip {
-  position: absolute;
-  background: white;
-  border: 1px solid #aaa;
-  border-radius: 4px;
-  padding: 0.5em;
-  pointer-events: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  font-size: 0.85em;
-  color: #333;
-  display: none;
-  white-space: nowrap;
-  z-index: 10;
+.glucose {
+  fill: steelblue;
+  stroke: black;
+  stroke-width: 0.5px;
+  r: 4;
 }
 
+/* Button Container */
 #tag-buttons {
   text-align: center;
-  margin-bottom: 1rem;
+  margin-top: 1em;
 }
 
+/* Buttons */
+/* Buttons */
 #tag-buttons button {
-  margin: 0 5px;
-  padding: 6px 12px;
-  background: #f0f0f0;
-  border: 1px solid #aaa;
-  border-radius: 4px;
+  margin: 0.3em;
+  padding: 0.5em 1em;
+  border: 1px solid #ccc;
+  background-color: #eee;
+  border-radius: 5px;
   cursor: pointer;
-  font-size: 0.9em;
+  color: black; /* Ensures default text is black */
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 #tag-buttons button:hover {
-  background: #ddd;
+  background-color: #ddd;
 }
 
 #tag-buttons button.active {
-  background-color: #007bff;
-  color: white;
-  border-color: #007bff;
+  background-color: #4285f4;
+  color: white; /* Text turns white only when active */
+  border-color: #4285f4;
 }
 
-/** **/
 
-#tag-buttons-agg {
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-#tag-buttons-agg button {
-  margin: 0 5px;
-  padding: 6px 12px;
-  background: #f0f0f0;
-  border: 1px solid #aaa;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9em;
-}
-
-#tag-buttons-agg button.active {
-  background-color: #007bff;
-  color: white;
-  border-color: #007bff;
-}
-
-#tag-buttons-agg button:hover {
-  background: #ddd;
-}
-
+/* Tooltip Styling */
 .tooltip {
   position: absolute;
   display: none;
-  background-color: white;
-  border: 1px solid #aaa;
-  padding: 0.5em;
-  font-size: 13px;
-  border-radius: 4px;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
   pointer-events: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
-.bar-chart {
-  margin-top: 20px;
-}
-.axis text {
-  font-size: 12px;
-}
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-.legend {
-  font-size: 12px;
-}
-.title {
-  font-size: 16px;
-  font-weight: bold;
+/* Selected Patients Display */
+#selected-patients {
   text-align: center;
-  margin-bottom: 20px;
+  margin-top: 1em;
+  font-size: 14px;
+  color: #666;
 }
+
+/* Responsive Container for Chart */
 .container {
-  max-width: 800px;
-  margin: 0 auto;
+  margin: 2em auto;
+  padding: 1em;
+  max-width: 960px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
+
+/* Title in Container */
+.container .title {
+  font-size: 1.5em;
+  margin-bottom: 0.5em;
+  text-align: center;
+}
+
+/* Controls Area */
 .controls {
-  background-color: #f8f9fa;
-  padding: 15px;
-  border-radius: 5px;
-  margin-bottom: 20px;
+  text-align: center;
+  margin-bottom: 1em;
+  display: flex;
+  justify-content: center;
 }
-button {
-  padding: 6px 12px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-button:hover {
-  background-color: #45a049;
-}
-textarea {
+
+/* Bar Chart Area - dynamic size */
+.bar-chart {
   width: 100%;
-  height: 100px;
-  margin-bottom: 10px;
-  font-family: monospace;
+  display: flex;
 }
-.label {
-  font-weight: bold;
-  margin-bottom: 5px;
+
+/* Layout for timeline and vertical buttons */
+.chart-with-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1.5em;
+  max-width: 1000px;
+  margin: 2em auto;
+  padding: 0 1em;
 }
+
+/* Timeline chart styling */
+.container {
+  flex: 1;
+  padding: 1em;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Vertical buttons layout */
+.vertical-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  padding-top: 1em;
+}
+
+.vertical-buttons button {
+  padding: 0.4em 1em;
+  border: 1px solid #ccc;
+  background-color: #eee;
+  border-radius: 5px;
+  color: black;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.vertical-buttons button:hover {
+  background-color: #ddd;
+}
+
+.vertical-buttons button.active {
+  background-color: #4285f4;
+  color: white;
+  border-color: #4285f4;
+}
+

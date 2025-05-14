@@ -7,23 +7,6 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="timeline_combined.js" type="module"></script>
     <script src="bar_plot.js" type="module"></script>
-    <style>
-      svg {
-        font-family: sans-serif;
-        margin: 2rem auto;
-        display: block;
-      }
-      .meal {
-        fill: orange;
-        cursor: pointer;
-      }
-      .glucose {
-        fill: steelblue;
-        stroke: black;
-        stroke-width: 0.5px;
-        r: 4;
-      }
-    </style>
   </head>
   <body>
     <!-- Title for the combined plot -->
@@ -31,17 +14,22 @@
       Average Glucose Response for All Meals
     </h2>
 
-    <!-- SVG for the combined plot -->
-    <svg id="timeline" width="960" height="500"></svg>
-
-    <!-- Buttons for filtering meal tags -->
-    <div id="tag-buttons" style="text-align: center; margin-top: 1em">
-      <button data-tag="vegetarian">Vegetarian</button>
-      <button data-tag="snack">Snack</button>
-      <button data-tag="breakfast">Breakfast</button>
-      <button data-tag="drink">Drink</button>
-      <button data-tag="dessert">Dessert</button>
-      <button data-tag="all" class="active">All Meals</button>
+    <!-- Combined chart and vertical buttons -->
+    <div class="container">
+      <div class="chart-with-buttons">
+        <!-- Vertical Buttons -->
+        <div id="tag-buttons" class="vertical-buttons">
+          <button data-tag="vegetarian">Vegetarian</button>
+          <button data-tag="snack">Snack</button>
+          <button data-tag="breakfast">Breakfast</button>
+          <button data-tag="drink">Drink</button>
+          <button data-tag="dessert">Dessert</button>
+          <button data-tag="all" class="active">All Meals</button>
+        </div>
+        
+        <!-- Timeline Chart -->
+          <svg id="timeline" width="860" height="400"></svg>
+      </div>
     </div>
 
     <!-- Tooltip for the plot -->
