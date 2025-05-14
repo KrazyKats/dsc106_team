@@ -290,27 +290,26 @@ export async function loadDataAndPlot(twoPlots, idsArray, tag) {
   let allMeals;
   if (twoPlots) {
     currentMeal = await processJsonFile(idsArray, tag);
-    allMeals = await processJsonFile();
+    allMeals = await processJsonFile(undefined, tag);
   } else {
-    currentMeal = await processJsonFile();
+    currentMeal = await processJsonFile(undefined, tag);
     allMeals = null;
   }
   const usedRanges = [10, 25, 50];
   const axisLabels = ["0-10g", "10-25g", "25-50g", "50+g"];
   if (twoPlots) {
     createHorizontalBarPlot(currentMeal, allMeals, usedRanges, axisLabels, {
-      set1Label: "Selected Data",
-      set2Label: "All Data",
+      set1Label: "Selected Patients",
+      set2Label: "All Patients",
       title:
-        "Are Carbs in Selected Meals Different From Average Meal in Dataset?",
+        "Carbs Contents of Selected Patients vs All Patients",
       colors: ["#4285F4", "#EA4335"],
     });
   }
   else {
     createHorizontalBarPlot(currentMeal, null, usedRanges, axisLabels, {
-      set1Label: "All Meals",
-      title: "Carbohydrates Distribution for All Patients",
+      set1Label: "All Patients",
+      title: "Carbohydrates Contents for All Patients",
     });
   }
 }
-// loadDataAndPlot(true, undefined, "breakfast");
