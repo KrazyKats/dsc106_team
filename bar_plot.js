@@ -58,9 +58,9 @@ function createHorizontalBarPlot(
   d3.select("#chart svg").remove();
 
   // Swap width and height for horizontal orientation
-  const margin = { top: 40, right: 60, bottom: 60, left: 150 };
+  const margin = { top: 40, right: 150, bottom: 60, left: 60 };
   const width = 800 - margin.left - margin.right;
-  const height = 600 - margin.top - margin.bottom;
+  const height = 300 - margin.top - margin.bottom;
 
   // Create SVG container
   const svg = d3
@@ -219,7 +219,7 @@ function createHorizontalBarPlot(
     .attr("font-size", "10px")
     .text((d) => `${d.value.toFixed(1)}%`);
 
-  // Add legend - positioned at the top
+  // Add legend - positioned at the top right in the margin
   const legend = svg
     .append("g")
     .attr("class", "legend")
@@ -230,7 +230,7 @@ function createHorizontalBarPlot(
     .data(keys)
     .enter()
     .append("g")
-    .attr("transform", (d, i) => `translate(${i * 120},${-margin.top / 2 + 15})`);
+    .attr("transform", (d, i) => `translate(${width + 10},${i * 25 + 10})`);
 
   legend
     .append("rect")
