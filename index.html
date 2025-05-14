@@ -26,7 +26,7 @@
           <button data-tag="dessert">Dessert</button>
           <button data-tag="all" class="active">All Meals</button>
         </div>
-        
+
         <!-- Timeline Chart -->
           <svg id="timeline" width="860" height="400"></svg>
       </div>
@@ -61,5 +61,37 @@
 
       <div id="chart" class="bar-chart"></div>
     </div>
+
+    <div class="container">
+    <h2>Rationale for Design Decisions</h2>
+    <p>
+      We designed our visualization to explore how different meal types affect glucose responses at both the individual and group level. The central visual encoding is an overlaid line plot, where each line represents a participant’s average post-meal glucose response across all meals for that participant or across all meals for the participant of a selected type. We aligned each curve to start at time zero (the moment of eating) and plotted average glucose values over the following 120 minutes (2 hour window). This encoding highlights variation in both peak magnitude and timing, which are critical for understanding postprandial glucose dynamics. To help contextualize individual lines, we added a dotted red line representing the overall average across all participants.
+    </p>
+    <p>
+      For the interactive line plot, we implemented dynamic query filters in the form of buttons that let users toggle between meal types such as “Vegetarian,” “Snack,” “Breakfast,” “Drinks,” and “Desserts.” This allows for quick comparisons of glucose responses across different dietary categories. Additionally, users can click on a participant’s line to select it, which triggers a secondary bar chart that bins the carbohydrate content of that individual’s meals under the current filter. This click-to-drill-down interaction connects response patterns to nutritional content in an intuitive and targeted way.
+    </p>
+    <p>
+      For the bar plots, we created bins of carbohydrate contents rather than a simple average to better display the possible skew in the carbohydrate content rather than a single-number summary. We also considered a box-plot, but we thought a target reader may not pay enough attention to it or understand box plots well enough.
+    </p>
+    <p>
+      We considered a number of alternatives before settling on this design. We explored faceted small multiples for each participant but found them space-inefficient and harder to compare across individuals. Heatmaps were another candidate, but they lacked the time dimension and shape expressiveness that line plots provide. We also debated using dropdowns instead of buttons and hover-based tooltips instead of clicks, but ultimately chose interactions that felt more direct and persistent. In the end, we chose a setup that’s straightforward to interact with but still allows users to dig deep and compare patterns across individuals.
+    </p>
+
+    <hr class="section-divider" />
+
+    <h2>Development</h2>
+    <p>
+      In the early stages of development, each team member was responsible for creating at least one compelling static visualization and explaining how it could inspire a more effective dynamic version. These examples helped guide our discussions about the core question or statement we wanted our visualization to communicate. This initial exploration phase took about 2-3 days and included a one-hour team meeting to finalize our direction for the project.
+    </p>
+    <p>
+      As we transitioned to building the dynamic visualization, we broke the work into four parallel tasks: (1) data cleaning and processing, (2) implementing a filtering system for meals based on JSON labels, (3) creating an interactive line plot to show glucose trends, and (4) designing a bar chart to compare the carbohydrate content of the meals, which can be filtered by meal types.
+    </p>
+    <p>
+      For data processing, we converted the original dataset into JSON format to support easier indexing and grouping. We also enriched the data by adding descriptive labels to meal items – such as “snack,” “dinner,” “vegetarian,” and “drinks” – to support meaningful filtering. This stage took about two days, with most of the time spent on cleaning and tagging meals by mealtime and participant ID.
+    </p>
+    <p>
+      Once the JSON data was ready, we first built the aggregated, overlaid line plots, which took a bit of time because we iterated through a couple versions. Then we built the bar chart in a day by linking it to the line plot through event handlers. Customizing titles and subtitles proved tricky, since the chart needed to respond dynamically to various user selections. The most time-consuming task was integrating everything into a cohesive interactive system. Finalizing the overlaid line plot and ensuring the interactivity worked smoothly between the selected lines and the bar chart took a couple hours.
+    </p>
+  </div>
   </body>
 </html>
