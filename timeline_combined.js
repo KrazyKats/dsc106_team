@@ -157,7 +157,7 @@ function updateBarPlot() {
     d3.select("#chart").selectAll("*").remove();
     
     // Determine if we need two plots based on selections
-    const twoPlots = clickedPatientIDs.length > 0 || currentTag !== "all";
+    const twoPlots = clickedPatientIDs.length > 0;
     
     // Get the IDs array (undefined if none selected)
     const idsArray = clickedPatientIDs.length > 0 ? clickedPatientIDs : undefined;
@@ -174,7 +174,7 @@ function updateBarPlot() {
 function drawCombinedLines(patients, aggregatedLine, numMeals, numParticipants, tagFilter) {
     const svg = d3.select("#timeline");
     const width = +svg.attr("width") - 100;
-    const height = +svg.attr("height") - 100;
+    const height = +svg.attr("height") - 50;
 
     const xScale = d3.scaleLinear().domain([0, 120]).range([50, width]);
     const yScale = d3.scaleLinear().domain([80, 170]).range([height, 20]);
@@ -335,7 +335,7 @@ function updateSelectedPatients() {
     selectedContainer.html(""); // Clear previous content
 
     if (clickedPatientIDs.length === 0) {
-        selectedContainer.append("p").text("No patients selected.");
+        selectedContainer.append("p").text("No patients selected. Showing data for all patients.");
     } else {
         selectedContainer.append("p").text("Selected Patient IDs:");
         selectedContainer.append("ul")
