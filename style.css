@@ -20,6 +20,10 @@ svg {
   transition: opacity 0.2s ease, stroke-width 0.2s ease;
 }
 
+.patient-line:not(.selected) {
+  stroke: lightgrey; /* Set unselected lines to light grey */
+}
+
 .patient-line:hover {
   opacity: 1;
 }
