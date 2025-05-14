@@ -278,8 +278,8 @@ function categorizeMealsByCarbs(meals, usedRanges) {
 export async function loadDataAndPlot(twoPlots, idsArray, tag) {
   /*
   Parameters:
-  Two Plots 
-  if false, only average meal data. 
+  Two Plots
+  if false, only average meal data.
   if true, average meal data and selected meal data from idsArray and tag
 
   idsArray:
