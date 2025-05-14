@@ -1,7 +1,7 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
 
 const DATA_DIR = "./quy_work/Output/jsons";
-console.log("Loaded Bar Plot");
+console.log("Loaded Horizontal Bar Plot");
 
 async function processJsonFile(idsArray, tag) {
   // Takes in a idsArray and tag, and outputs an array of all contents
@@ -29,7 +29,8 @@ async function processJsonFile(idsArray, tag) {
     return outputArray;
   }
 }
-function createBarPlot(
+
+function createHorizontalBarPlot(
   mealSet1,
   mealSet2,
   usedRanges,
@@ -56,9 +57,10 @@ function createBarPlot(
   // Clear previous chart if any exists
   d3.select("#chart svg").remove();
 
-  const margin = { top: 40, right: 150, bottom: 60, left: 40 };
+  // Swap width and height for horizontal orientation
+  const margin = { top: 40, right: 150, bottom: 60, left: 60 };
   const width = 800 - margin.left - margin.right;
-  const height = 600 - margin.top - margin.bottom;
+  const height = 300 - margin.top - margin.bottom;
 
   // Create SVG container
   const svg = d3
@@ -68,6 +70,9 @@ function createBarPlot(
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  // Determine if we're showing one or two datasets
+  const isSingleDataset = mealSet2 === null || mealSet2 === undefined;
 
   // Add title to the chart
   const chartTitle =
@@ -87,14 +92,6 @@ function createBarPlot(
     .style("font-size", "16px")
     .style("font-weight", "bold")
     .text(chartTitle);
-
-  // Setup scales
-  const x0 = d3.scaleBand().rangeRound([0, width]).paddingInner(0.1);
-  const x1 = d3.scaleBand().padding(0.05);
-  const y = d3.scaleLinear().rangeRound([height, 0]);
-
-  // Determine if we're showing one or two datasets
-  const isSingleDataset = mealSet2 === null || mealSet2 === undefined;
 
   // Set color scale based on number of datasets
   const defaultColors = isSingleDataset
@@ -147,76 +144,82 @@ function createBarPlot(
     });
   }
 
-  // Setup domains
-  x0.domain(chartData.map((d) => d.range));
-  x1.domain(keys).rangeRound([0, x0.bandwidth()]);
-  y.domain([0, d3.max(chartData, (d) => d3.max(keys, (key) => d[key]))]).nice();
+  // Setup scales for horizontal bars
+  const y0 = d3.scaleBand().rangeRound([0, height]).paddingInner(0.1);
+  const y1 = d3.scaleBand().padding(0.05);
+  const x = d3.scaleLinear().rangeRound([0, width]);
 
-  // Add x axis
+  // Setup domains
+  y0.domain(chartData.map((d) => d.range));
+  y1.domain(keys).rangeRound([0, y0.bandwidth()]);
+  x.domain([0, d3.max(chartData, (d) => d3.max(keys, (key) => d[key]))]).nice();
+
+  // Add y axis (categories)
+  svg
+    .append("g")
+    .attr("class", "axis")
+    .call(d3.axisLeft(y0))
+    .append("text")
+    .attr("x", -height / 2)
+    .attr("y", -margin.left + 20)
+    .attr("transform", "rotate(-90)")
+    .attr("fill", "#000")
+    .attr("text-anchor", "middle")
+    .text("Carbohydrate Range");
+
+  // Add x axis (values)
   svg
     .append("g")
     .attr("class", "axis")
     .attr("transform", `translate(0,${height})`)
-    .call(d3.axisBottom(x0))
+    .call(d3.axisBottom(x).ticks(null, "s"))
     .append("text")
     .attr("x", width / 2)
     .attr("y", margin.bottom - 10)
     .attr("fill", "#000")
     .attr("text-anchor", "middle")
-    .text("Carbohydrate Range");
-
-  // Add y axis
-  svg
-    .append("g")
-    .attr("class", "axis")
-    .call(d3.axisLeft(y).ticks(null, "s"))
-    .append("text")
-    .attr("x", -height / 2)
-    .attr("y", -30)
-    .attr("fill", "#000")
-    .attr("transform", "rotate(-90)")
-    .attr("text-anchor", "middle")
     .text("Percentage of Meals (%)");
 
-  // Add the bars
+  // Add the horizontal bars
   svg
     .append("g")
     .selectAll("g")
     .data(chartData)
     .enter()
     .append("g")
-    .attr("transform", (d) => `translate(${x0(d.range)},0)`)
+    .attr("transform", (d) => `translate(0,${y0(d.range)})`)
     .selectAll("rect")
     .data((d) => keys.map((key) => ({ key, value: d[key], range: d.range })))
     .enter()
     .append("rect")
-    .attr("x", (d) => x1(d.key))
-    .attr("y", (d) => y(d.value))
-    .attr("width", x1.bandwidth())
-    .attr("height", (d) => height - y(d.value))
+    .attr("y", (d) => y1(d.key))
+    .attr("x", 0)
+    .attr("height", y1.bandwidth())
+    .attr("width", (d) => x(d.value))
     .attr("fill", (d) => color(d.key))
     .append("title")
     .text((d) => `${d.range}, ${d.key}: ${d.value.toFixed(1)}%`);
 
-  // Add value labels on top of the bars
+  // Add value labels at the end of the bars
   svg
     .append("g")
     .selectAll("g")
     .data(chartData)
     .enter()
     .append("g")
-    .attr("transform", (d) => `translate(${x0(d.range)},0)`)
+    .attr("transform", (d) => `translate(0,${y0(d.range)})`)
     .selectAll("text")
     .data((d) => keys.map((key) => ({ key, value: d[key], range: d.range })))
     .enter()
     .append("text")
-    .attr("x", (d) => x1(d.key) + x1.bandwidth() / 2)
-    .attr("y", (d) => y(d.value) - 5)
-    .attr("text-anchor", "middle")
+    .attr("x", (d) => x(d.value) + 5)
+    .attr("y", (d) => y1(d.key) + y1.bandwidth() / 2)
+    .attr("dy", "0.35em")
+    .attr("text-anchor", "start")
     .attr("font-size", "10px")
     .text((d) => `${d.value.toFixed(1)}%`);
 
-  // Add legend - moved to the right side with improved positioning
+  // Add legend - positioned at the top right in the margin
   const legend = svg
     .append("g")
     .attr("class", "legend")
@@ -227,7 +230,7 @@ function createBarPlot(
     .data(keys)
     .enter()
     .append("g")
-    .attr("transform", (d, i) => `translate(${width + 20},${20 + i * 25})`); // More spacing between legend items
+    .attr("transform", (d, i) => `translate(${width + 10},${i * 25 + 10})`);
 
   legend
     .append("rect")
@@ -241,14 +244,7 @@ function createBarPlot(
     .attr("x", 24)
     .attr("y", 9)
     .attr("dy", "0.32em")
-    .text((d) => d)
-    .each(function (d) {
-      // Get the computed text width and ensure it fits
-      const textWidth = this.getComputedTextLength();
-      if (textWidth > margin.right - 50) {
-        d3.select(this).attr("textLength", margin.right - 50);
-      }
-    });
+    .text((d) => d);
 }
 
 function categorizeMealsByCarbs(meals, usedRanges) {
@@ -294,27 +290,26 @@ export async function loadDataAndPlot(twoPlots, idsArray, tag) {
   let allMeals;
   if (twoPlots) {
     currentMeal = await processJsonFile(idsArray, tag);
-    allMeals = await processJsonFile();
+    allMeals = await processJsonFile(undefined, tag);
   } else {
-    currentMeal = await processJsonFile();
+    currentMeal = await processJsonFile(undefined, tag);
     allMeals = null;
   }
   const usedRanges = [10, 25, 50];
   const axisLabels = ["0-10g", "10-25g", "25-50g", "50+g"];
   if (twoPlots) {
-    createBarPlot(currentMeal, allMeals, usedRanges, axisLabels, {
-      set1Label: "Selected Data",
-      set2Label: "All Data",
+    createHorizontalBarPlot(currentMeal, allMeals, usedRanges, axisLabels, {
+      set1Label: "Selected Patients",
+      set2Label: "All Patients",
       title:
-        "Are Carbs in Selected Meals Different From Average Meal in Dataset?",
+        "Carbs Contents of Selected Patients vs All Patients",
       colors: ["#4285F4", "#EA4335"],
     });
   }
   else {
-    createBarPlot(currentMeal, null, usedRanges, axisLabels, {
-      set1Label: "All Meals",
-      title: "Carbohydrates Distribution for All Patients",
+    createHorizontalBarPlot(currentMeal, null, usedRanges, axisLabels, {
+      set1Label: "All Patients",
+      title: "Carbohydrates Contents for All Patients",
     });
   }
 }
-// loadDataAndPlot(true, undefined, "breakfast");
