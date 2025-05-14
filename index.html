@@ -1,55 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Glucose + Food Log Timeline</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="timeline_combined.js" type="module"></script>
+    <script src="bar_plot.js" type="module"></script>
     <style>
-        svg {
-            font-family: sans-serif;
-            margin: 2rem auto;
-            display: block;
-        }
-        .meal {
-            fill: orange;
-            cursor: pointer;
-        }
-        .glucose {
-            fill: steelblue;
-            stroke: black;
-            stroke-width: 0.5px;
-            r: 4;
-        }
+      svg {
+        font-family: sans-serif;
+        margin: 2rem auto;
+        display: block;
+      }
+      .meal {
+        fill: orange;
+        cursor: pointer;
+      }
+      .glucose {
+        fill: steelblue;
+        stroke: black;
+        stroke-width: 0.5px;
+        r: 4;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Title for the combined plot -->
-    <h2 id="chart-title" style="text-align:center; margin-bottom: 0.5em;">
-        Average Glucose Response for All Meals
+    <h2 id="chart-title" style="text-align: center; margin-bottom: 0.5em">
+      Average Glucose Response for All Meals
     </h2>
 
     <!-- SVG for the combined plot -->
     <svg id="timeline" width="960" height="500"></svg>
 
     <!-- Buttons for filtering meal tags -->
-    <div id="tag-buttons" style="text-align:center; margin-top: 1em;">
-        <button data-tag="vegetarian">Vegetarian</button>
-        <button data-tag="snack">Snack</button>
-        <button data-tag="breakfast">Breakfast</button>
-        <button data-tag="drink">Drink</button>
-        <button data-tag="dessert">Dessert</button>
-        <button data-tag="all" class="active">All Meals</button>
+    <div id="tag-buttons" style="text-align: center; margin-top: 1em">
+      <button data-tag="vegetarian">Vegetarian</button>
+      <button data-tag="snack">Snack</button>
+      <button data-tag="breakfast">Breakfast</button>
+      <button data-tag="drink">Drink</button>
+      <button data-tag="dessert">Dessert</button>
+      <button data-tag="all" class="active">All Meals</button>
     </div>
 
     <!-- Tooltip for the plot -->
-    <div class="tooltip" id="tooltip" style="position: absolute; display: none; background: #fff; border: 1px solid #ccc; padding: 10px; border-radius: 5px; pointer-events: none;"></div>
+    <div
+      class="tooltip"
+      id="tooltip"
+      style="
+        position: absolute;
+        display: none;
+        background: #fff;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        pointer-events: none;
+      "
+    ></div>
 
     <!-- Container for displaying selected patient IDs -->
-    <div id="selected-patients" style="text-align:center; margin-top: 1em; font-size: 14px;">
-        No patients selected.
+    <div
+      id="selected-patients"
+      style="text-align: center; margin-top: 1em; font-size: 14px"
+    >
+      No patients selected.
     </div>
+    <div class="container">
+      <div class="title">Carbohydrates Plot</div>
 
-</body>
+      <div class="controls"></div>
+
+      <div id="chart" class="bar-chart"></div>
+    </div>
+  </body>
 </html>
