@@ -1,6 +1,6 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
 
-const DATA_DIR = "../quy_work/Output/jsons";
+const DATA_DIR = "./quy_work/Output/jsons";
 console.log("Loaded Bar Plot");
 
 async function processJsonFile(idsArray, tag) {
@@ -279,7 +279,7 @@ function categorizeMealsByCarbs(meals, usedRanges) {
   return percentages;
 }
 
-async function loadDataAndPlot(twoPlots, idsArray, tag) {
+export async function loadDataAndPlot(twoPlots, idsArray, tag) {
   /*
   Parameters:
   Two Plots 
@@ -317,4 +317,4 @@ async function loadDataAndPlot(twoPlots, idsArray, tag) {
     });
   }
 }
-loadDataAndPlot(false, undefined, "breakfast");
+// loadDataAndPlot(true, undefined, "breakfast");

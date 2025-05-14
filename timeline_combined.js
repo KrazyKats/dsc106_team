@@ -1,18 +1,26 @@
 console.log("📈 Combined timeline.js loaded");
-
+import { loadDataAndPlot } from "./bar_plot.js";
 // Global variables to store data
 let glucoseDataGlobal, foodDataGlobal;
+// Array to store clicked patient IDs
+const clickedPatientIDs = [];
+// Variable to track currently selected tag
+let currentTag = "all";
 
 // Load data and initialize the plot
 Promise.all([
-    d3.json("data/flattened_glucose.json"),
-    d3.json("data/food_log_tagged.json")
+    d3.json("data_website/flattened_glucose.json"),
+    d3.json("data_website/food_log_tagged.json")
 ]).then(([glucoseData, foodData]) => {
     console.log("📦 Data loaded");
     glucoseDataGlobal = glucoseData;
     foodDataGlobal = foodData;
 
+    // Initialize both plots
     updateCombinedPlot("all");
+    
+    // Initialize the bar plot with default parameters (no selections)
+    loadDataAndPlot(false, undefined, undefined);
 });
 
 function extractGlucoseWindows(glucoseData, foodData, targetID, tagFilter = "all") {
@@ -143,10 +151,25 @@ function averageByMinute(aligned) {
     })).sort((a, b) => a.minute - b.minute);
 }
 
-// Function to draw both individual and aggregated lines
-// Array to store clicked patient IDs
-const clickedPatientIDs = [];
+// Function to update the bar plot based on current selections
+function updateBarPlot() {
+    // Clear previous plot
+    d3.select("#chart").selectAll("*").remove();
+    
+    // Determine if we need two plots based on selections
+    const twoPlots = clickedPatientIDs.length > 0 || currentTag !== "all";
+    
+    // Get the IDs array (undefined if none selected)
+    const idsArray = clickedPatientIDs.length > 0 ? clickedPatientIDs : undefined;
+    
+    // Get the tag (undefined if 'all' is selected)
+    const tag = currentTag !== "all" ? currentTag : undefined;
+    
+    // Call loadDataAndPlot with the appropriate parameters
+    loadDataAndPlot(twoPlots, idsArray, tag);
+}
 
+// Function to draw both individual and aggregated lines
 function drawCombinedLines(patients, aggregatedLine, numMeals, numParticipants, tagFilter) {
     const svg = d3.select("#timeline");
     const width = +svg.attr("width") - 100;
@@ -226,6 +249,9 @@ function drawCombinedLines(patients, aggregatedLine, numMeals, numParticipants, 
             // Dim unselected lines
             svg.selectAll(".patient-line")
                 .attr("opacity", line => clickedPatientIDs.length === 0 || clickedPatientIDs.includes(line.uid) ? 0.6 : 0.2);
+                
+            // Update the bar plot with new selections
+            updateBarPlot();
         });
 
     // Draw aggregated line
@@ -298,10 +324,17 @@ function updateSelectedPatients() {
 // Button click behavior
 d3.selectAll("#tag-buttons button").on("click", function () {
     const tag = d3.select(this).attr("data-tag");
+    
+    // Store the current tag selection
+    currentTag = tag;
 
     // Update button style
     d3.selectAll("#tag-buttons button").classed("active", false);
     d3.select(this).classed("active", true);
 
+    // Update the timeline visualization
     updateCombinedPlot(tag);
+    
+    // Update the bar plot with new selections
+    updateBarPlot();
 });
