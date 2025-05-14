@@ -29,6 +29,19 @@ svg {
   cursor: pointer;
 }
 
+.patient-line.selected {
+  opacity: 1;
+  transition: opacity 0.2s ease, stroke-width 0.2s ease;
+}
+
+.patient-line:not(.selected) {
+  stroke: lightgrey; /* Set unselected lines to light grey */
+}
+
+.patient-line:hover {
+  opacity: 1;
+}
+
 .glucose {
   fill: steelblue;
   stroke: black;
